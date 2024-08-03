@@ -23,13 +23,13 @@ const setupServer = () => {
     try {
       const contacts = await getAllContacts();
       res.status(200).json({
-        status: 'success',
+        status: 200,
         message: 'Successfully found contacts!',
         data: contacts,
       });
     } catch (error) {
       res.status(500).json({
-        status: 'error',
+        status: 500,
         message: error.message,
       });
     }
@@ -53,7 +53,7 @@ const setupServer = () => {
       }
     } catch (error) {
       res.status(500).json({
-        status: 'error',
+        status: 500,
         message: error.message,
       });
     }
