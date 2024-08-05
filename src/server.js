@@ -19,6 +19,12 @@ const setupServer = () => {
     })
   );
 
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      message: 'Welcome to the Contacts API',
+    });
+  });
+
   app.get('/contacts', async (req, res) => {
     const contacts = await getAllContacts();
 
