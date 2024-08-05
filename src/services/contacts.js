@@ -14,7 +14,7 @@ export const getContactById = async (contactId) => {
     try {
         const contact = await ContactsCollection.findById(contactId);
         if (!contact) {
-            throw new Error('Contact not found');
+            return null;
         }
         return contact;
     } catch (error) {
