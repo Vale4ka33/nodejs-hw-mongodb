@@ -22,3 +22,15 @@ export const getContactById = async (contactId) => {
         throw new Error('Failed to get contact');
     }
 };
+
+export const postContact = (newContact)=> ContactsCollection.create(newContact);
+
+export const updateContactById = async (contactId, updateData) => {
+    const updatedContact = await ContactsCollection.findByIdAndUpdate(contactId, updateData, {
+      new: true,
+    });
+  
+    return updatedContact;
+  };
+
+export const deleteContactById = (contactId) => ContactsCollection.findByIdAndDelete(contactId);
