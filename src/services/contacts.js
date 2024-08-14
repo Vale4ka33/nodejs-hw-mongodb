@@ -1,36 +1,44 @@
 import { ContactsCollection } from "../db/model/contact.js";
 
-export const getAllContacts = async () => {
-    try {
-        const contacts = await ContactsCollection.find();
-        return contacts;
-    } catch (error) {
-        console.error('Error fetching contacts:', error);
-        throw new Error('Failed to fetch contacts');
-    }
+export const getAllContacts = async ({ page, perPage, sortBy, sortOrder }) => {
+    const skip = page > 0 ? (page - 1) * perPage : 0;
+
+    const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+
+    const [contacts, count] = await Promise.all([
+        ContactsCollection.find().sort(sortOption).skip(skip).limit(perPage),
+        ContactsCollection.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(count / perPage);
+
+    return {
+        contacts,
+        page,
+        perPage,
+        totalItems: count,
+        totalPages,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages,
+    };
 };
+
 
 export const getContactById = async (contactId) => {
-    try {
-        const contact = await ContactsCollection.findById(contactId);
-        if (!contact) {
-            return null;
-        }
-        return contact;
-    } catch (error) {
-        console.error('Failed to get contact:', error);
-        throw new Error('Failed to get contact');
+    const contact = await ContactsCollection.findById(contactId);
+    if (!contact) {
+        return null;
     }
+    return contact;
 };
 
-export const postContact = (newContact)=> ContactsCollection.create(newContact);
+export const postContact = (newContact) => ContactsCollection.create(newContact);
 
 export const updateContactById = async (contactId, updateData) => {
     const updatedContact = await ContactsCollection.findByIdAndUpdate(contactId, updateData, {
-      new: true,
+        new: true,
     });
-  
     return updatedContact;
-  };
+};
 
 export const deleteContactById = (contactId) => ContactsCollection.findByIdAndDelete(contactId);
