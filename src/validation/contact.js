@@ -11,10 +11,9 @@ export const createContactSchema = Joi.object({
     'number.base': 'Phone number should be a number',
     'any.required': 'Phone number is required'
   }),
-  email: Joi.string().email().required().messages({
+  email: Joi.string().email().messages({
     'string.base': 'Email should be a string',
     'string.email': 'Email should be a valid email address',
-    'any.required': 'Email is required'
   }),
   isFavourite: Joi.boolean().required().messages({
     'boolean.base': 'Is Favourite should be a boolean',

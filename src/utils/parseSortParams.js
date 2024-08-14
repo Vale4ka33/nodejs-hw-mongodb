@@ -10,7 +10,7 @@ const parseSortOrder = (sortOrder) => {
 
 const parseSortBy = (sortBy) => {
   if(typeof sortBy !== 'string'){
-    return '_id';
+    return 'name';
   }
   const keysOfContact = ['_id', 'name', 'email', 'phoneNumber','contactType', 'createdAt'];
 
