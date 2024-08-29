@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteContactController, getAllContactsController, getContactByIdController, postContactController, updateContactController } from "../controllers/contscts.js";
+import { deleteContactController, getAllContactsController, getContactByIdController, postContactController, updateContactController } from "../controllers/contacts.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { validateBody } from "../middlewares/validateBody.js";
 import { createContactSchema, updateContactSchema } from "../validation/contact.js";

@@ -6,12 +6,13 @@ export const getAllContacts = async ({
     perPage = 10, 
     sortBy = 'name', 
     sortOrder = SORT_ORDER.ASC,
-    filter = {}
+    filter = {},
+    userId
 }) => {
     const skip = page > 0 ? (page - 1) * perPage : 0;
     const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
-    const query = {};
+    const query = { userId };
     if (filter.contactType) {
         query.contactType = filter.contactType;
     }
@@ -20,6 +21,8 @@ export const getAllContacts = async ({
     }
 
     const contactsQuery = ContactsCollection.find(query);
+
+    contactsQuery.where('userId').equals(userId);
     
     const countQuery = ContactsCollection.countDocuments(query);
 
@@ -42,21 +45,29 @@ export const getAllContacts = async ({
 };
 
 
-export const getContactById = async (contactId) => {
-    const contact = await ContactsCollection.findById(contactId);
+export const getContactById = async (contactId, userId) => {
+    const contact = await ContactsCollection.findOne({ _id: contactId, userId });
     if (!contact) {
         return null;
     }
     return contact;
 };
 
-export const postContact = (newContact) => ContactsCollection.create(newContact);
 
-export const updateContactById = async (contactId, updateData) => {
-    const updatedContact = await ContactsCollection.findByIdAndUpdate(contactId, updateData, {
-        new: true,
-    });
+export const postContact = async (newContact, userId) => {
+    const contactWithUserId = { ...newContact, userId };
+    return ContactsCollection.create(contactWithUserId);
+};
+
+export const updateContactById = async (contactId, updateData, userId) => {
+    const updatedContact = await ContactsCollection.findOneAndUpdate(
+        { _id: contactId, userId },
+        updateData,
+        { new: true }
+    );
+    
     return updatedContact;
 };
 
-export const deleteContactById = (contactId) => ContactsCollection.findByIdAndDelete(contactId);
+
+export const deleteContactById = (contactId, userId) => ContactsCollection.findOneAndDelete({ _id: contactId, userId });
