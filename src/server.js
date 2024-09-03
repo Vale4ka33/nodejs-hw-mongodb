@@ -13,6 +13,9 @@ const setupServer = () => {
   const app = express();
 
   app.use(express.json());
+
+  app.use('/avatars', express.static('src/public/avatars'));
+
   app.use(cors());
   app.use(cookieParser());
   app.use(

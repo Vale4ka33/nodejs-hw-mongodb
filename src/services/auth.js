@@ -95,7 +95,8 @@ export const requestResetEmail = async (email) => {
 
   const html = template({
     name: user.name,
-    resetToken
+    resetToken,
+    APP_DOMAIN
   });
 
   await sendMail({
