@@ -1,6 +1,5 @@
 import createHttpError from 'http-errors';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { env } from '../utils/env.js';
 
 import {
   deleteContactById,
@@ -13,8 +12,8 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
-import { ensureDirExists } from '../utils/ensureDirExists.js';
 import mongoose from 'mongoose';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getAllContactsController = async (req, res, next) => {
   try {
@@ -67,20 +66,13 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const postContactController = async (req, res, next) => {
-  let photo = null;
+  let photoUrl = null;
 
   if (req.file) {
-    if (process.env.ENABLE_CLOUDINARY === 'true') {
-      
-      const result = await uploadToCloudinary(req.file.path);
-      photo = result;
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await uploadToCloudinary(req.file);
     } else {
-      
-      const avatarsDir = path.resolve('src', 'public', 'avatars');
-      await ensureDirExists(avatarsDir);
-      const destPath = path.join(avatarsDir, req.file.filename);
-      await fs.rename(req.file.path, destPath);
-      photo = `http://localhost:3000/avatars/${req.file.filename}`;
+      photoUrl = await saveFileToUploadDir(req.file);
     }
   }
 
@@ -88,11 +80,11 @@ export const postContactController = async (req, res, next) => {
   const userId = req.user._id;
 
   if (!name || !phoneNumber || !contactType) {
-    throw createHttpError(400, 'Name, phoneNumber, and contactType are required');
+    return next(createHttpError(400, 'Name, phoneNumber, and contactType are required'));
   }
 
   if (!mongoose.isValidObjectId(userId)) {
-    throw createHttpError(400, 'Invalid userId');
+    return next(createHttpError(400, 'Invalid userId'));
   }
 
   const newContact = await postContact({
@@ -102,8 +94,12 @@ export const postContactController = async (req, res, next) => {
     isFavourite,
     contactType,
     userId,
-    photo,
+    photo: photoUrl,
   });
+
+  if (!newContact) {
+    return next(createHttpError(400, 'Failed to create contact'));
+  }
 
   res.status(201).json({
     status: 201,
@@ -121,20 +117,16 @@ export const updateContactController = async (req, res, next) => {
   let photoUrl;
 
   if (photo) {
-    if (process.env.ENABLE_CLOUDINARY === 'true') {
-      photoUrl = await uploadToCloudinary(photo.path);
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await uploadToCloudinary(photo);
     } else {
-      const filePath = `src/public/avatars/${photo.filename}`;
-      photoUrl = `/public/avatars/${photo.filename}`;
-
-      await fs.copyFile(photo.path, filePath);
-      await fs.unlink(photo.path);
+      photoUrl = await saveFileToUploadDir(photo);
     }
   }
 
   const dataToUpdate = {
     ...updateData,
-    ...(photoUrl && { photo: photoUrl }), 
+    ...(photoUrl && { photo: photoUrl }),
   };
 
   const updatedContact = await updateContactById(

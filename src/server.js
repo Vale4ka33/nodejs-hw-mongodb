@@ -6,6 +6,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
 import router from './routers/index.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/index.js';
 
 const PORT = Number(env('PORT', '3000'));
 
@@ -14,7 +15,7 @@ const setupServer = () => {
 
   app.use(express.json());
 
-  app.use('/avatars', express.static('src/public/avatars'));
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use(cors());
   app.use(cookieParser());
