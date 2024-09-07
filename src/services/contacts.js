@@ -54,17 +54,19 @@ export const getContactById = async (contactId, userId) => {
 };
 
 
-export const postContact = async (newContact, userId) => {
-    const contactWithUserId = { ...newContact, userId };
-    return ContactsCollection.create(contactWithUserId);
+export const postContact = async (newContact) => {
+    return ContactsCollection.create(newContact);
 };
 
-export const updateContactById = async (contactId, updateData, userId) => {
+export const updateContactById = async ({ contactId, userId }, updateData, options = {}) => {
+    
     const updatedContact = await ContactsCollection.findOneAndUpdate(
         { _id: contactId, userId },
         updateData,
-        { new: true }
+        { new: true, ...options }
     );
+    
+    console.log('Updated contact:', updatedContact);
     
     return updatedContact;
 };
