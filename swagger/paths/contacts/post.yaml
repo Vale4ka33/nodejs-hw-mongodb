@@ -1,0 +1,71 @@
+tags:
+  - Contacts
+summary: Create a new contact
+operationId: postContact
+description: 'Add a new contact with the provided details, including an optional photo.'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - email
+          - isFavourite
+          - contactType
+          - userId
+        properties:
+          name:
+            description: "Full name of the contact."
+            type: string
+            example: 'Valentina Ukho'
+          phoneNumber:
+            description: "Contact's phone number in international format."
+            type: string
+            example: '+380000000002'
+          email:
+            description: "Contact's email address."
+            type: string
+            example: 'valentina.ukho@example.com'
+          isFavourite:
+            description: "Indicates whether the contact is marked as favourite."
+            type: boolean
+            default: false
+          contactType:
+            description: "Category of the contact. Acceptable values are 'work', 'home', or 'personal'."
+            type: string
+            enum: ['work', 'home', 'personal']
+          userId:
+            description: "ID of the user who owns the contact."
+            type: string
+            example: '65e4decdd286b30065d54af9'
+          photo:
+            description: "Optional URL of the contact's photo."
+            type: string
+            example: 'https://res.cloudinary.com/uqwgdu/image/upload/image.png'
+responses:
+  '201':
+    description: Contact successfully created.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: New contact has been created successfully!
+            data:
+              type: object
+              $ref: '../../components/schemas/contact.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'

@@ -1,0 +1,54 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: 'Authenticate a user using their email and password credentials'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            description: "Registered email address of the user"
+            type: string
+            example: 'petrova.hfhfhf@gmail.com'
+          password:
+            description: "Password associated with the user's account"
+            type: string
+            example: 'password123'
+responses:
+  '200':
+    description: Successfully logged in
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'User successfully logged in!'
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: '8KtsPA/HhygGeUR8Gi+Tan/dQlwSb3SntqFklzB7'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '404':
+    $ref: '../../components/responses/404.yaml'

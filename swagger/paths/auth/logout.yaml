@@ -1,0 +1,10 @@
+tags:
+  - Auth
+summary: Logout user
+operationId: logoutUser
+description: "End the user's session and log them out from the application"
+security:
+  - bearerAuth: []
+responses:
+  '204':
+    description: 'User successfully logged out, no content returned'

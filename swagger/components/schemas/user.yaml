@@ -1,0 +1,23 @@
+type: object
+required:
+  - _id
+  - name
+  - email
+  - password
+properties:
+  _id:
+    description: "Unique identifier for the user"
+    type: string
+    example: 65e4decdd286b30065d54af9
+  name:
+    description: "Full name of the user"
+    type: string
+    example: 'Valentina Ukho'
+  email:
+    description: "Email address of the user"
+    type: string
+    example: "petrova.hfhfhf@gmail.com"
+  password:
+    description: "User's password, typically stored in a hashed format"
+    type: string
+    example: '12345'
