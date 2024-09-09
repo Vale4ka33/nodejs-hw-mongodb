@@ -1,19 +1,22 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: ContactsHUB
+  title: ContactsApp
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: Documentation of the contacts managing app.
+  description: API documentation for managing contacts within the app.
 tags:
   - name: Contacts
-    description: Operations about contacts.
+    description: Actions related to contact management.
   - name: Auth
-    description: Auth operations.
+    description: Authentication-related actions.
 servers:
-  - url: http://localhost:3000
   - url: https://contacts-app-vo2h.onrender.com
+    description: Production server
+  - url: http://localhost:3000
+    description: Development server
+
 paths:
   /contacts:
     get:
